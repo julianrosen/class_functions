@@ -183,7 +183,7 @@ class ClassFunction(RingElement):
         S = ""
         S = S + "\tClass function on the Galois group of "+str(self.field)+"\n"
         for C in self.D:
-            S = S + "\t" + str(C) + " maps to " + str(self.D[C]) + "\n"
+            S = S + "\t" + str(C.an_element()) + " maps to " + str(self.D[C]) + "\n"
         S = S[:-1]
         if string:
             return S
