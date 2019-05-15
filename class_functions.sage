@@ -11,6 +11,8 @@ def restrict(C1,f):
     """
     K,L = f.domain(),f.codomain()
     if not K.is_galois() or not L.is_galois():
+        print K
+        print L
         raise ValueError("The domain and codomain of f must be Galois over Q")
     x = K.gens()[0]
     G,H = K.galois_group(),L.galois_group()
@@ -44,7 +46,6 @@ class ClassFunctions(Ring):
             return True
         elif isinstance(S,ClassFunctions) and self:
             return True
-        print "Coercion failed: ",S,parent(S)
         return False
     
 
@@ -61,7 +62,7 @@ class ClassFunction(RingElement):
             except:
                 print "Field failed"
             self.gen = self.field.gens()[0]
-            self.D = {self.group().an_element():parent.base()(s)}
+            self.D = {self.group().conjugacy_classes()[0]:parent.base()(s)}
             self.desc = str(s)
         elif isinstance(s,ClassFunction):
             self.field = s.field
@@ -90,6 +91,8 @@ class ClassFunction(RingElement):
         S = [(s[0],s[1]) for s in S]
         S.sort(key=lambda s:s[0].degree())
         for L,f in S:
+            if not L.is_galois():
+                continue
             for C in self.D:
                 try:
                     L(self.D[C])
@@ -116,15 +119,15 @@ class ClassFunction(RingElement):
         assert self.field is K
         assert L.is_galois()
         D = {}
-        for C in L.galois_group().conjugacy_classes():
-            rho = restrict(C,f)
-            assert rho in K.galois_group().conjugacy_classes()
-            if rho not in self.D:
+        for C1 in L.galois_group().conjugacy_classes():
+            C2 = restrict(C1,f)
+            assert C2 in K.galois_group().conjugacy_classes()
+            if C2 not in self.D:
                 print self.field
-                print rho
+                print C2
                 print self.D
                 raise Exception("Error")
-            D[C] = f(self.D[restrict(C,f)])
+            D[C1] = f(self.D[C2])
         T = ClassFunction(parent(self),0)
         T.D = D
         T.field = L
@@ -193,7 +196,7 @@ class ClassFunction(RingElement):
     def inv(self):
         if not self.is_inv():
             raise ValueError("Element is not invertible")
-        T = ArtPerElement(self.parent(),self)
+        T = ClassFunction(self.parent(),self)
         for x in T.D:
             T.D[x] = T.D[x]^(-1)
         return T
