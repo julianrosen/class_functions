@@ -44,15 +44,15 @@ class ClassFunctions(Ring):
             return True
         elif isinstance(S,ClassFunctions) and self:
             return True
-        elif isinstance(S,Recurrence) and QQ.coerce_map_from(S.base()):
-            return True
         print "Coercion failed: ",S,parent(S)
         return False
     
 
 class ClassFunction(RingElement):
-    """Objects of this class are de Rham motivic periods of
-    the category of Artin motives over Q"""
+    """
+    Objects of this class are locally constan class functions on
+    the absolute Galois group of Q
+    """
     def __init__(self,parent,s):
         RingElement.__init__(self,parent)
         if isinstance(s,Number):
@@ -61,7 +61,7 @@ class ClassFunction(RingElement):
             except:
                 print "Field failed"
             self.gen = self.field.gens()[0]
-            self.D = {self.group().an_element():self.base()(s)}
+            self.D = {self.group().an_element():parent.base()(s)}
             self.desc = str(s)
         elif isinstance(s,ClassFunction):
             self.field = s.field
@@ -177,6 +177,7 @@ class ClassFunction(RingElement):
             return (self^(-n)).inv()
     
     def disp(self,string=False):
+        S = ""
         S = S + "\tClass function on the Galois group of "+str(self.field)+"\n"
         for C in self.D:
             S = S + "\t" + str(C) + " maps to " + str(self.D[C]) + "\n"
