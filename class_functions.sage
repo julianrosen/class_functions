@@ -27,7 +27,6 @@ def restrict(C1,f):
 Number = (Integer,Rational)
 
 class ClassFunctions(Ring):
-    # Element = ArtPerElement
     def __init__(self,base=QQ):
         Ring.__init__(self,base=QQ)
         self._populate_coercion_lists_()
@@ -51,7 +50,7 @@ class ClassFunctions(Ring):
 
 class ClassFunction(RingElement):
     """
-    Objects of this class are locally constan class functions on
+    Objects of this class are locally constant class functions on
     the absolute Galois group of Q
     """
     def __init__(self,parent,s):
@@ -116,6 +115,7 @@ class ClassFunction(RingElement):
     
     def extend_field(self,f):
         K,L = f.domain(),f.codomain()
+        assert set(self.D.keys()) == set(self.field.galois_group().conjugacy_classes())
         assert self.field is K
         assert L.is_galois()
         D = {}
@@ -126,7 +126,7 @@ class ClassFunction(RingElement):
                 print self.field
                 print C2
                 print self.D
-                raise Exception("Error")
+                raise Exception("Error extending field")
             D[C1] = f(self.D[C2])
         T = ClassFunction(parent(self),0)
         T.D = D
