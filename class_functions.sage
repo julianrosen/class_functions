@@ -17,7 +17,7 @@ def restrict(C1,f):
     for C2 in G.conjugacy_classes():
         g = C2.an_element()
         for h in C1:
-            if g(f(x)) == f(h(x)):
+            if f(g(x)) == h(f(x)):
                 return C2
     # This should not happen
     raise Exception("Could not restrict")
@@ -124,7 +124,7 @@ class ClassFunction(RingElement):
                 print rho
                 print self.D
                 raise Exception("Error")
-            D[h] = f(self.D[restrict(h,f)])
+            D[C] = f(self.D[restrict(C,f)])
         T = ClassFunction(parent(self),0)
         T.D = D
         T.field = L
