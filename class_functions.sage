@@ -61,7 +61,7 @@ class ClassFunction(RingElement):
             except:
                 print "Field failed"
             self.gen = self.field.gens()[0]
-            self.D = {self.group().conjugacy_classes()[0]:parent.base()(s)}
+            self.D = {self.group().an_element().conjugacy_class():parent.base()(s)}
             self.desc = str(s)
         elif isinstance(s,ClassFunction):
             self.field = s.field
@@ -200,6 +200,30 @@ class ClassFunction(RingElement):
                 LL = 'Id'
             S = S + LL + r"\mapsto" + latex(self.D[C]) + "\\\\"
         return S
+
+    def inner_product(self,g):
+        """ Returns the inner product of two class functions if the base ring
+            admits a map to the complex numbers. Conjugation occurs in the second
+            slot.
+        """
+        if not CC.coerce_map_from(self.parent().base_ring()):
+            raise ValueError("Cannot coerce map to complex numbers.")
+        h = self*g.conj()
+        return sum(h.D.values())
+
+    def conj(self,in_place = False):
+        if not CC.coerce_map_from(self.parent().base_ring()):
+            raise ValueError("Cannot coerce map to complex numbers.")
+        Dc = dict()
+        for c in self.D:
+            Dc[c] = conjugate(D[c])
+
+        if in_place:
+            self.D = Dc
+        else:
+            gc = copy(self)
+            gc.D = Dc
+            return gc
     
     def inv(self):
         if not self.is_inv():
